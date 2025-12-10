@@ -1,8 +1,38 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute"; // New Import
+import LandingPage from "./pages/LandingPage";
+import EventListingPage from "./pages/EventListingPage";
+import EventDetailsPage from "./pages/EventDetailsPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register"; // Assuming you create this form next
+
 function App() {
   return (
-    <>
-      <h1 className="bg-red-700">Hello Event Management!!!</h1>
-    </>
+    <Router>
+      <Routes>
+        {/* Public Routes with shared layout (Header/Footer) */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<LandingPage />} />
+          <Route path="events" element={<EventListingPage />} />
+          <Route path="events/:id" element={<EventDetailsPage />} />
+        </Route>
+
+        {/* Auth Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* Admin Route - PROTECTED */}
+        {/* This route renders the ProtectedRoute, which then renders AdminDashboard if isAdmin is true */}
+        <Route element={<ProtectedRoute allowedRole="admin" />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+        </Route>
+
+        {/* 404 Not Found Route */}
+        <Route path="*" element={<div>404 Not Found</div>} />
+      </Routes>
+    </Router>
   );
 }
 
