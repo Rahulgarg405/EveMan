@@ -2,13 +2,22 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import EventCard from "../components/EventCard";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = "http://localhost:3000/events"; // Event APIs [cite: 46]
+const API_BASE_URL = "http://localhost:3000/events";
 
 const EventListingPage = () => {
+  const navigate = useNavigate();
+
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    navigate("/login");
+  }
 
   // State for search and filter [cite: 7, 65]
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,12 +54,12 @@ const EventListingPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-extrabold text-gray-900 mb-8">
+      <h1 className="text-3xl font-extrabold font-sans text-gray-300 mb-5 mt-7">
         Upcoming Events
       </h1>
 
       {/* Search and Filter Section [cite: 7, 65] */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="text-white p-3 rounded-lg shadow-md mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
         <input
           type="text"
           placeholder="Search by title or description"

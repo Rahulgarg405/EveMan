@@ -5,66 +5,88 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
-  const { user, logout, isAdmin } = useAuth();
+  // Destructure the authentication state and functions
+  const { user, logout, isAdmin, isAuthenticated } = useAuth();
 
   return (
-    <header className="bg-white shadow-md">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        {/* Logo/Brand */}
-        <Link to="/" className="text-2xl font-bold text-indigo-600">
-          Smart Event Booking
+    // NOTE: Keep the absolute positioning if this Header is ONLY used on the Landing Page.
+    // If used on all pages, you should remove 'absolute' and related classes in the <Layout>.
+    <header className="absolute top-0 left-0 right-0 z-20 container mx-auto px-4 py-4 flex justify-between items-center text-white">
+      {/* Brand/Logo Link */}
+      <Link to="/" className="text-2xl font-bold">
+        EveMan
+      </Link>
+
+      {/* Navigation and Auth Links */}
+      <div className="flex items-center space-x-6 text-sm">
+        {/* Contact Info (Visible on desktop) */}
+        <span className="hidden sm:inline">(888) 123 4567</span>
+        <span className="hidden sm:inline">info@example.com</span>
+
+        {/* Core Navigation: Browse Events */}
+        <Link
+          to="/events"
+          className="px-5 py-2 bg-white text-[#6F38E8] font-semibold rounded-full flex items-center shadow-lg hover:bg-gray-100 transition duration-300"
+        >
+          Buy Ticket
+          <svg
+            className="ml-2 w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
         </Link>
 
-        {/* Navigation Links */}
-        <nav className="flex space-x-6 items-center">
-          <Link
-            to="/events"
-            className="text-gray-700 hover:text-indigo-600 transition"
-          >
-            Browse Events
-          </Link>
+        {/* --- Authentication/Authorization Links --- */}
+        {isAuthenticated ? (
+          // --- LOGGED IN STATE ---
+          <>
+            <span className="hidden lg:inline text-white">
+              Hello, {user.username || user.email}!
+            </span>
 
-          {user ? (
-            // Logged In State
-            <>
-              <span className="text-gray-500 text-sm hidden sm:inline">
-                Hello, {user.username || user.email}!
-              </span>
-
-              {isAdmin && (
-                <Link
-                  to="/admin"
-                  className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
-                >
-                  Admin Dashboard
-                </Link>
-              )}
-
-              <button
-                onClick={logout}
-                className="px-3 py-1 border border-red-500 text-red-500 rounded-md hover:bg-red-50 transition"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            // Logged Out State
-            <>
+            {/* Admin Dashboard Button (VISIBLE ONLY IF isAdmin is TRUE) */}
+            {isAdmin && (
               <Link
-                to="/login"
-                className="text-gray-700 hover:text-indigo-600 transition"
+                to="/admin"
+                className="px-4 py-2 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 text-sm"
               >
-                Login
+                Admin Dashboard
               </Link>
-              <Link
-                to="/register"
-                className="px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
-              >
-                Register
-              </Link>
-            </>
-          )}
-        </nav>
+            )}
+
+            {/* Logout Button */}
+            <button
+              onClick={logout}
+              className="px-4 py-2 border border-white text-white font-semibold rounded-full hover:bg-white hover:text-[#6F38E8] transition duration-300 text-sm cursor-pointer"
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          // --- LOGGED OUT STATE ---
+          <>
+            <Link
+              to="/login"
+              className="text-white hover:text-gray-300 transition duration-300 hidden md:inline"
+            >
+              Login
+            </Link>
+            <Link
+              to="/register"
+              className="text-white hover:text-gray-300 transition duration-300 hidden md:inline"
+            >
+              Register
+            </Link>
+          </>
+        )}
       </div>
     </header>
   );

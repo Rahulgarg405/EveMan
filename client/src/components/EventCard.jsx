@@ -71,7 +71,7 @@ const EventCard = ({ event }) => {
               <strong>Date:</strong> {formattedDate}
             </p>
             <p className="text-lg font-bold text-indigo-600 mt-2">
-              Price: ${price}
+              Price: ₹{price}
             </p>
           </div>
         </div>

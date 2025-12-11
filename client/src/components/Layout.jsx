@@ -7,9 +7,9 @@ import Header from "./Header"; // We will create this next
 
 const Layout = () => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-[#6d33ccdc]">
       <Header />
-      <main className="flex-grow">
+      <main className="grow">
         {/* Outlet renders the current route content (e.g., LandingPage, EventListingPage) */}
         <Outlet />
       </main>

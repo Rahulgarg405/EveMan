@@ -1,12 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
-import ProtectedRoute from "./components/ProtectedRoute"; // New Import
+import ProtectedRoute from "./components/ProtectedRoutes";
 import LandingPage from "./pages/LandingPage";
 import EventListingPage from "./pages/EventListingPage";
 import EventDetailsPage from "./pages/EventDetailsPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import Login from "./pages/Login";
-import Register from "./pages/Register"; // Assuming you create this form next
+import Register from "./pages/Register";
+import BookingSuccess from "./pages/BookingSuccess";
 
 function App() {
   return (
@@ -17,14 +18,16 @@ function App() {
           <Route index element={<LandingPage />} />
           <Route path="events" element={<EventListingPage />} />
           <Route path="events/:id" element={<EventDetailsPage />} />
+          <Route
+            path="booking/success/:bookingId"
+            element={<BookingSuccess />}
+          />
         </Route>
 
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Admin Route - PROTECTED */}
-        {/* This route renders the ProtectedRoute, which then renders AdminDashboard if isAdmin is true */}
         <Route element={<ProtectedRoute allowedRole="admin" />}>
           <Route path="/admin" element={<AdminDashboard />} />
         </Route>
