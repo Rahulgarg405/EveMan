@@ -4,8 +4,7 @@ import axios from "axios";
 import io from "socket.io-client";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
-
-const API_BASE_URL = "http://localhost:3000";
+import { API_BASE_URL } from "../config";
 
 const EventDetailsPage = () => {
   const { id } = useParams();

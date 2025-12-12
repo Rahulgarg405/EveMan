@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
-
-const API_BASE_URL = "http://localhost:3000/events";
+import { API_BASE_URL } from "../../config";
 
 // Helper to convert date to YYYY-MM-DDTHH:mm format for datetime-local input
 const formatDateForInput = (dateString) => {

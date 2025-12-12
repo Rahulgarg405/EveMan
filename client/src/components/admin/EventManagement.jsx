@@ -2,8 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import EventForm from "./EventForm";
-
-const API_BASE_URL = "http://localhost:3000/events";
+import { API_BASE_URL } from "../../config";
 
 const EventManagement = () => {
   const { token } = useAuth();
@@ -21,7 +20,8 @@ const EventManagement = () => {
     setLoading(true);
     try {
       const response = await axios.get(API_BASE_URL);
-      setEvents(response.data);
+      const incomingData = Array.isArray(response.data) ? response.data : [];
+      setEvents(incomingData);
       setError(null);
     } catch (err) {
       setError("Failed to load events. Check API and token validity.");

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = "http://localhost:3000/events";
+import { API_BASE_URL } from "../config";
 
 const EventListingPage = () => {
   const navigate = useNavigate();
@@ -35,7 +35,9 @@ const EventListingPage = () => {
       if (dateFilter) params.date = dateFilter;
 
       const response = await axios.get(API_BASE_URL, { params });
-      setEvents(response.data);
+
+      const incomingData = Array.isArray(response.data) ? response.data : [];
+      setEvents(incomingData);
     } catch (err) {
       setError("Failed to fetch events. Please try again.");
       console.error(err);
