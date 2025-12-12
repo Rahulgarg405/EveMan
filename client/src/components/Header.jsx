@@ -1,29 +1,20 @@
-// client/src/components/Header.jsx
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
-  // Destructure the authentication state and functions
   const { user, logout, isAdmin, isAuthenticated } = useAuth();
 
   return (
-    // NOTE: Keep the absolute positioning if this Header is ONLY used on the Landing Page.
-    // If used on all pages, you should remove 'absolute' and related classes in the <Layout>.
     <header className="absolute top-0 left-0 right-0 z-20 container mx-auto px-4 py-4 flex justify-between items-center text-white">
-      {/* Brand/Logo Link */}
       <Link to="/" className="text-2xl font-bold">
         EveMan
       </Link>
 
-      {/* Navigation and Auth Links */}
       <div className="flex items-center space-x-6 text-sm">
-        {/* Contact Info (Visible on desktop) */}
         <span className="hidden sm:inline">(888) 123 4567</span>
-        <span className="hidden sm:inline">info@example.com</span>
+        <span className="hidden sm:inline">rgarg3577@gmail.com</span>
 
-        {/* Core Navigation: Browse Events */}
         <Link
           to="/events"
           className="px-5 py-2 bg-white text-[#6F38E8] font-semibold rounded-full flex items-center shadow-lg hover:bg-gray-100 transition duration-300"
@@ -44,7 +35,6 @@ const Header = () => {
           </svg>
         </Link>
 
-        {/* --- Authentication/Authorization Links --- */}
         {isAuthenticated ? (
           // --- LOGGED IN STATE ---
           <>
@@ -52,7 +42,6 @@ const Header = () => {
               Hello, {user.username || user.email}!
             </span>
 
-            {/* Admin Dashboard Button (VISIBLE ONLY IF isAdmin is TRUE) */}
             {isAdmin && (
               <Link
                 to="/admin"

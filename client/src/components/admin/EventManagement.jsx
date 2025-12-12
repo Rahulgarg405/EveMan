@@ -63,7 +63,7 @@ const EventManagement = () => {
   const handleFormSuccess = () => {
     setIsFormVisible(false);
     setEditingEvent(null);
-    fetchEvents(); // Refresh the list
+    fetchEvents();
   };
 
   if (loading)

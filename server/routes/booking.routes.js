@@ -1,24 +1,18 @@
-// server/routes/bookingRoutes.js
-
 const express = require("express");
-const db = require("../config/db"); // The database connection pool
+const db = require("../config/db");
 const { protect } = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
-// Helper function to check if a value is a valid positive integer
 const isPositiveInteger = (value) => {
   return Number.isInteger(value) && value > 0;
 };
 
-// POST /bookings - Book tickets
 router.post("/", protect, async (req, res) => {
-  // Note: We are mocking a user_id for now, replace with actual auth later
   const user_id = req.user.id;
 
   const { event_id, name, email, quantity, mobile, total_amount } = req.body;
 
-  // 1. Basic Input Validation
   if (
     !event_id ||
     !name ||
@@ -34,11 +28,9 @@ router.post("/", protect, async (req, res) => {
   let connection;
 
   try {
-    // Start a database connection and transaction
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    // --- PART 1: Check Availability and Price ---
     const [events] = await connection.query(
       "SELECT available_seats, price FROM events WHERE id = ? FOR UPDATE", // LOCK the row for the transaction
       [event_id]
@@ -60,11 +52,10 @@ router.post("/", protect, async (req, res) => {
       });
     }
 
-    // Price Verification (optional but recommended security)
     const calculated_total = quantity * price;
     if (parseFloat(total_amount) !== calculated_total) {
       await connection.rollback();
-      // Log this for security audit
+      // Logging this for security audit
       console.warn(
         `Price mismatch for Event ${event_id}. Client: ${total_amount}, Server: ${calculated_total}`
       );
@@ -73,7 +64,6 @@ router.post("/", protect, async (req, res) => {
         .json({ message: "Total amount is incorrect. Booking aborted." });
     }
 
-    // --- PART 2: Create the Booking Record ---
     const bookingSql = `INSERT INTO bookings (user_id, event_id, name, email, quantity, mobile, total_amount) 
                             VALUES (?, ?, ?, ?, ?, ?, ?)`;
     const bookingValues = [
@@ -89,7 +79,7 @@ router.post("/", protect, async (req, res) => {
     const [bookingResult] = await connection.query(bookingSql, bookingValues);
     const bookingId = bookingResult.insertId;
 
-    // --- PART 3: Update Seat Count (Deduction) ---
+    // Update Seat Count (Deduction) ---
     const new_available_seats = available_seats - quantity;
     const updateSql = "UPDATE events SET available_seats = ? WHERE id = ?";
 
@@ -98,10 +88,9 @@ router.post("/", protect, async (req, res) => {
     const eventId = event_id;
     const newAvailableSeats = new_available_seats;
 
-    // --- PART 4: Commit Transaction ---
+    // Committing Transaction :
     await connection.commit();
 
-    // Success response
     res.status(201).json({
       message: "Tickets successfully booked and seats confirmed!",
       bookingId: bookingId,
@@ -127,7 +116,6 @@ router.post("/", protect, async (req, res) => {
       .status(500)
       .json({ message: "Failed to process booking due to a server error." });
   } finally {
-    // Release the connection back to the pool
     if (connection) {
       connection.release();
     }

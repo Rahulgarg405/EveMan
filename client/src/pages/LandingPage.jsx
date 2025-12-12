@@ -19,7 +19,7 @@ const LandingPage = () => {
     <div className="relative min-h-screen bg-[#6d33ccdc] overflow-hidden">
       <MovingLine />
 
-      {/* ===== HERO SECTION ===== */}
+      {/* HERO SECTION */}
       <motion.div
         style={{
           opacity: fadeOut,
@@ -52,8 +52,8 @@ const LandingPage = () => {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="text-lg md:text-xl text-white mb-10 max-w-2xl"
         >
-          Explore our lineup of keynote speakers and industry leaders who will
-          inspire and enlighten at the conference.
+          This is an Event Booking and Management System. Book Tickets for
+          events seamlessly.
         </motion.p>
 
         <motion.div
@@ -102,12 +102,11 @@ const LandingPage = () => {
                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
-            <span>Elgin Celina, Delaware</span>
+            <span>Kota, Rajasthan</span>
           </span>
         </motion.div>
       </motion.div>
 
-      {/* ===== CARDS OVERLAP SECTION ===== */}
       <motion.div
         style={{
           y: cardsMoveUp,

@@ -1,19 +1,14 @@
-// client/src/components/Layout.jsx
-
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Header from "./Header"; // We will create this next
-// import Footer from './Footer'; // Optional: add a footer component later
+import Header from "./Header";
 
 const Layout = () => {
   return (
     <div className="flex flex-col min-h-screen bg-[#6d33ccdc]">
       <Header />
       <main className="grow">
-        {/* Outlet renders the current route content (e.g., LandingPage, EventListingPage) */}
         <Outlet />
       </main>
-      {/* <Footer /> */}
     </div>
   );
 };

@@ -1,5 +1,3 @@
-// client/src/components/admin/EventForm.jsx
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
@@ -10,7 +8,7 @@ const API_BASE_URL = "http://localhost:3000/events";
 const formatDateForInput = (dateString) => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  // Ensure the date is treated as local time to avoid timezone offset issues on the input
+
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
@@ -23,7 +21,6 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
   const { token } = useAuth();
   const isUpdating = !!eventData;
 
-  // Initial state based on whether we are creating or updating
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -32,15 +29,13 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
     total_seats: 0,
     price: 0.0,
     img: "",
-    ...eventData, // Overwrite with existing data if updating
-    // Handle date conversion for the input field
+    ...eventData,
     date: eventData ? formatDateForInput(eventData.date) : "",
   });
 
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState(null);
 
-  // Ensure form data updates if the parent passes a new eventData object
   useEffect(() => {
     if (eventData) {
       setFormData({
@@ -48,7 +43,6 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
         date: formatDateForInput(eventData.date),
       });
     } else {
-      // Reset form for creation mode
       setFormData({
         title: "",
         description: "",
@@ -98,7 +92,7 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
       });
 
       alert(`Event ${isUpdating ? "updated" : "created"} successfully!`);
-      onSuccess(); // Close form and refresh list
+      onSuccess();
     } catch (err) {
       console.error("Submission Error:", err.response?.data);
       setFormError(
@@ -119,7 +113,6 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
 
       {formError && <p className="text-red-500">{formError}</p>}
 
-      {/* Input Fields (Example: Title) */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Title</label>
         <input
@@ -132,7 +125,6 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
         />
       </div>
 
-      {/* Input Fields (Example: Date and Time) */}
       <div>
         <label className="block text-sm font-medium text-gray-700">
           Date and Time
@@ -147,7 +139,6 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
         />
       </div>
 
-      {/* Input Fields (Example: Seats) */}
       <div>
         <label className="block text-sm font-medium text-gray-700">
           Total Seats
@@ -163,7 +154,6 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
         />
       </div>
 
-      {/* Input Fields (Example: Price) */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Price</label>
         <input
@@ -203,8 +193,6 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
         />
       </div>
-
-      {/* Input Fields (Description, Location, Img - to be added for completeness) */}
 
       <div className="flex justify-end space-x-3 pt-4">
         <button

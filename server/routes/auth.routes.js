@@ -7,7 +7,6 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "jwtsecretkey";
 const saltRounds = 10;
 
-// --- A. User Registration ---
 router.post("/register", async (req, res) => {
   const { username, email, password, role } = req.body;
 
@@ -46,7 +45,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// --- B. User Login ---
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 

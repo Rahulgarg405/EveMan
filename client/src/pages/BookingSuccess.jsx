@@ -1,5 +1,3 @@
-// client/src/pages/BookingSuccess.jsx
-
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -29,7 +27,6 @@ const confettiVariants = {
 const BookingSuccess = () => {
   const { bookingId } = useParams();
 
-  // URL to encode in the QR code (could be a ticket verification URL on your backend)
   const qrCodeValue = `http://localhost:3000/verify-ticket/${bookingId}`;
 
   const downloadQRCode = () => {

@@ -1,24 +1,18 @@
-// server/routes/eventRoutes.js
-
 const express = require("express");
 const { protect, isAdmin } = require("../middleware/auth.middleware");
-const db = require("../config/db"); // The database connection pool
+const db = require("../config/db");
 
 const router = express.Router();
 
-// 1. POST /events - Create Event (Admin Only)
 router.post("/", protect, isAdmin, async (req, res) => {
-  // Note: We are mocking req.user.id = 1 for the admin_id placeholder
   const { title, description, location, date, total_seats, price, img } =
     req.body;
   const admin_id = req.user.id;
 
-  // Simple validation
   if (!title || !location || !date || !total_seats || !price) {
     return res.status(400).json({ message: "Missing required event fields." });
   }
 
-  // Set available_seats equal to total_seats upon creation [cite: 23, 25]
   const available_seats = total_seats;
 
   const sql = `INSERT INTO events (admin_id, title, description, location, date, total_seats, available_seats, price, img) 
@@ -47,9 +41,8 @@ router.post("/", protect, isAdmin, async (req, res) => {
   }
 });
 
-// 2. GET /events - List all events (search, filter by date/location)
 router.get("/", protect, async (req, res) => {
-  const { search, location, date } = req.query; // Get query parameters
+  const { search, location, date } = req.query;
 
   let sql =
     "SELECT id, title, location, date, price, available_seats FROM events WHERE 1=1";
@@ -61,9 +54,8 @@ router.get("/", protect, async (req, res) => {
     values.push(`%${location}%`);
   }
 
-  // Filter by date (simple date match/range)
+  // filter by date :
   if (date) {
-    // Note: For advanced date ranges, the query logic will be more complex (e.g., BETWEEN)
     sql += " AND DATE(date) = ?";
     values.push(date);
   }
@@ -74,7 +66,6 @@ router.get("/", protect, async (req, res) => {
     values.push(`%${search}%`, `%${search}%`);
   }
 
-  // Order by date to show upcoming events first [cite: 7]
   sql += " ORDER BY date ASC";
 
   try {
@@ -86,9 +77,6 @@ router.get("/", protect, async (req, res) => {
   }
 });
 
-// Inside server/routes/eventRoutes.js
-
-// 3. GET /events/:id - Event details
 router.get("/:id", protect, async (req, res) => {
   const { id } = req.params;
 
@@ -99,7 +87,7 @@ router.get("/:id", protect, async (req, res) => {
     if (events.length === 0) {
       return res.status(404).json({ message: "Event not found." });
     }
-    // Return the first (and only) result
+
     res.json(events[0]);
   } catch (error) {
     console.error("Database Error:", error);
@@ -107,16 +95,114 @@ router.get("/:id", protect, async (req, res) => {
   }
 });
 
-// 4. PUT /events/:id - Update event (Admin Only) [cite: 53]
 router.put("/:id", protect, isAdmin, async (req, res) => {
-  // Event update logic will go here
-  res.send("Admin: Update event route");
+  const { id } = req.params;
+  const { title, description, location, date, total_seats, price, img } =
+    req.body;
+
+  if (
+    !title ||
+    !location ||
+    !date ||
+    total_seats === undefined ||
+    price === undefined
+  ) {
+    return res
+      .status(400)
+      .json({ message: "Missing required event fields for update." });
+  }
+
+  let connection;
+
+  try {
+    connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    const [currentEvents] = await connection.query(
+      "SELECT total_seats, available_seats FROM events WHERE id = ? FOR UPDATE",
+      [id]
+    );
+
+    if (currentEvents.length === 0) {
+      await connection.rollback();
+      return res.status(404).json({ message: "Event not found." });
+    }
+
+    const currentEvent = currentEvents[0];
+
+    let new_available_seats = currentEvent.available_seats;
+
+    //  the change in available seats if total_seats was modified
+    const seats_difference = total_seats - currentEvent.total_seats;
+
+    if (seats_difference !== 0) {
+      // If the admin REDUCED total_seats, check if the reduction is greater than remaining seats
+      if (
+        total_seats <
+        currentEvent.total_seats - currentEvent.available_seats
+      ) {
+        await connection.rollback();
+        return res.status(400).json({
+          message:
+            "Total seats cannot be reduced below the number of currently booked seats.",
+        });
+      }
+
+      // If valid, update available_seats by the difference (can be positive or negative)
+      new_available_seats = currentEvent.available_seats + seats_difference;
+    }
+
+    const sql = `UPDATE events SET title=?, description=?, location=?, date=?, total_seats=?, available_seats=?, price=?, img=? WHERE id=?`;
+    const values = [
+      title,
+      description,
+      location,
+      date,
+      total_seats,
+      new_available_seats,
+      price,
+      img,
+      id,
+    ];
+
+    await connection.query(sql, values);
+
+    await connection.commit();
+
+    res.status(200).json({
+      message: "Event updated successfully.",
+      newAvailableSeats: new_available_seats,
+    });
+  } catch (error) {
+    console.error("Update Transaction Failed:", error);
+    if (connection) {
+      await connection.rollback();
+    }
+    res.status(500).json({ message: "Failed to update event." });
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
 });
 
-// 5. DELETE /events/:id - Delete event (Admin Only) [cite: 55]
 router.delete("/:id", protect, isAdmin, async (req, res) => {
-  // Event delete logic will go here
-  res.send("Admin: Delete event route");
+  const { id } = req.params;
+
+  const sql = "DELETE FROM events WHERE id = ?";
+
+  try {
+    const [result] = await db.query(sql, [id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Event not found." });
+    }
+
+    res.status(200).json({ message: "Event deleted successfully." });
+  } catch (error) {
+    console.error("Database Error:", error);
+    res.status(500).json({ message: "Failed to delete event." });
+  }
 });
 
 module.exports = router;

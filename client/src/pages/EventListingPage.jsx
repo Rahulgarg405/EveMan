@@ -19,7 +19,6 @@ const EventListingPage = () => {
     navigate("/login");
   }
 
-  // State for search and filter [cite: 7, 65]
   const [searchTerm, setSearchTerm] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
@@ -35,7 +34,6 @@ const EventListingPage = () => {
       if (locationFilter) params.location = locationFilter;
       if (dateFilter) params.date = dateFilter;
 
-      // GET /events - List all events (search, filter by date/location) [cite: 50]
       const response = await axios.get(API_BASE_URL, { params });
       setEvents(response.data);
     } catch (err) {
@@ -46,9 +44,7 @@ const EventListingPage = () => {
     }
   }, [searchTerm, locationFilter, dateFilter]);
 
-  // Fetch events when the component mounts or filters change
   useEffect(() => {
-    // Note: You could debounce the filters here for a better user experience
     fetchEvents();
   }, [fetchEvents]);
 
@@ -58,7 +54,6 @@ const EventListingPage = () => {
         Upcoming Events
       </h1>
 
-      {/* Search and Filter Section [cite: 7, 65] */}
       <div className="text-white p-3 rounded-lg shadow-md mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
         <input
           type="text"
@@ -82,11 +77,9 @@ const EventListingPage = () => {
         />
       </div>
 
-      {/* Display States */}
       {loading && <div className="text-center text-lg">Loading events...</div>}
       {error && <div className="text-center text-red-500 text-lg">{error}</div>}
 
-      {/* Event Grid */}
       {!loading && events.length === 0 && !error && (
         <div className="text-center text-gray-500 text-lg">
           No events found matching your criteria.

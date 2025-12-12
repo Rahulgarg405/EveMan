@@ -1,5 +1,3 @@
-// client/src/pages/Register.jsx
-
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
@@ -26,7 +24,6 @@ const Register = () => {
     setError("");
     setSuccess("");
 
-    // Basic frontend validation for required fields
     if (!formData.username || !formData.email || !formData.password) {
       return setError("Please fill out all fields.");
     }
