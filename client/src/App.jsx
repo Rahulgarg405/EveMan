@@ -8,8 +8,19 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import BookingSuccess from "./pages/BookingSuccess";
+import { useAuth } from "./context/AuthContext";
 
 function App() {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-xl">
+        Initializing Session...
+      </div>
+    );
+  }
+  console.log(loading);
   return (
     <Router>
       <Routes>

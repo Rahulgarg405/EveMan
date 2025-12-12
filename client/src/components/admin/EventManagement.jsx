@@ -1,9 +1,7 @@
-// client/src/components/admin/EventManagement.jsx
-
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
-import EventForm from "./EventForm"; // Component for Create/Update form
+import EventForm from "./EventForm";
 
 const API_BASE_URL = "http://localhost:3000/events";
 
@@ -13,18 +11,15 @@ const EventManagement = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null); // State to hold event data for editing
+  const [editingEvent, setEditingEvent] = useState(null);
 
-  // Headers for authenticated requests (Admin only routes)
   const authConfig = {
     headers: { Authorization: `Bearer ${token}` },
   };
 
-  // --- R: Read Events ---
   const fetchEvents = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch all events (we'll just use the basic GET /events here)
       const response = await axios.get(API_BASE_URL);
       setEvents(response.data);
       setError(null);
@@ -40,13 +35,11 @@ const EventManagement = () => {
     fetchEvents();
   }, [fetchEvents]);
 
-  // --- U: Update Event (Setup for Form) ---
   const handleEdit = (event) => {
     setEditingEvent(event);
     setIsFormVisible(true);
   };
 
-  // --- D: Delete Event ---
   const handleDelete = async (eventId) => {
     if (
       !window.confirm(
@@ -57,9 +50,8 @@ const EventManagement = () => {
     }
 
     try {
-      // DELETE /events/:id [cite: 55]
       await axios.delete(`${API_BASE_URL}/${eventId}`, authConfig);
-      // Remove the event from the local state
+
       setEvents((prevEvents) => prevEvents.filter((e) => e.id !== eventId));
       console.log(`Event ${eventId} deleted.`);
     } catch (err) {
@@ -68,7 +60,6 @@ const EventManagement = () => {
     }
   };
 
-  // Callback after a form submission (Create or Update)
   const handleFormSuccess = () => {
     setIsFormVisible(false);
     setEditingEvent(null);
@@ -82,9 +73,7 @@ const EventManagement = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">
-          Events List ({events.length})
-        </h2>
+        <h2 className="text-2xl font-semibold">Events List</h2>
         <button
           onClick={() => {
             setEditingEvent(null);
@@ -95,8 +84,6 @@ const EventManagement = () => {
           + Create New Event
         </button>
       </div>
-
-      {/* Event Form (Create/Update) */}
       {(isFormVisible || editingEvent) && (
         <div className="mb-8 p-6 bg-white shadow-xl rounded-lg border border-indigo-200">
           <EventForm
@@ -109,8 +96,6 @@ const EventManagement = () => {
           />
         </div>
       )}
-
-      {/* Events Table (R: Read) */}
       <div className="overflow-x-auto bg-white shadow-md rounded-lg">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -162,8 +147,6 @@ const EventManagement = () => {
           </tbody>
         </table>
       </div>
-
-      {/* TO DO: Add Booking Tracking for each event (Advanced feature) */}
     </div>
   );
 };

@@ -77,12 +77,24 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
     const url = isUpdating ? `${API_BASE_URL}/${eventData.id}` : API_BASE_URL;
     const method = isUpdating ? "PUT" : "POST";
 
+    const submissionToken = token || localStorage.getItem("token");
+
+    console.log("Submmting wiht token : ", submissionToken);
+    console.log("Submmting to URL : ", url);
+
+    if (!submissionToken || submissionToken === "undefined") {
+      console.error("TOKEN MISSING OR UNDEFINED. ABORTING SUBMISSION.");
+      setSubmitting(false);
+      setFormError("Authentication failed. Please log in again.");
+      return; // STOP the submission
+    }
+
     try {
       await axios({
         method,
         url,
         data: formData,
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${submissionToken}` },
       });
 
       alert(`Event ${isUpdating ? "updated" : "created"} successfully!`);

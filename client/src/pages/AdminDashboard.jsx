@@ -1,11 +1,8 @@
-// client/src/pages/AdminDashboard.jsx
-
 import React, { useState } from "react";
 import EventManagement from "../components/admin/EventManagement";
-// We would add BookingManagement later if required by the assignment
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState("events"); // State to control which admin view is active
+  const [activeTab, setActiveTab] = useState("events");
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -26,7 +23,6 @@ const AdminDashboard = () => {
         >
           Event Management
         </button>
-        {/* You can add a tab for tracking bookings here */}
       </div>
 
       {/* Tab Content */}

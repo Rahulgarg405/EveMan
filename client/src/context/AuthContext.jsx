@@ -112,6 +112,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     register,
     loading,
+    token,
   };
 
   return (
