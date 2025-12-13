@@ -10,6 +10,8 @@ import { API_BASE_URL } from "../config";
 const EventListingPage = () => {
   const navigate = useNavigate();
 
+  const EVENTS_API_URL = `${API_BASE_URL}/events`;
+
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,7 +36,7 @@ const EventListingPage = () => {
       if (locationFilter) params.location = locationFilter;
       if (dateFilter) params.date = dateFilter;
 
-      const response = await axios.get(API_BASE_URL, { params });
+      const response = await axios.get(EVENTS_API_URL, { params });
 
       const incomingData = Array.isArray(response.data) ? response.data : [];
       setEvents(incomingData);

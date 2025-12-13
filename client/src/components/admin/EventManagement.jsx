@@ -5,6 +5,7 @@ import EventForm from "./EventForm";
 import { API_BASE_URL } from "../../config";
 
 const EventManagement = () => {
+  const EVENTS_API_URL = `${API_BASE_URL}/events`;
   const { token } = useAuth();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,7 @@ const EventManagement = () => {
   const fetchEvents = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(API_BASE_URL);
+      const response = await axios.get(EVENTS_API_URL);
       const incomingData = Array.isArray(response.data) ? response.data : [];
       setEvents(incomingData);
       setError(null);

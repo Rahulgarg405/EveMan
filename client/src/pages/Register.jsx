@@ -7,8 +7,7 @@ const Register = () => {
     username: "",
     email: "",
     password: "",
-    // Note: We won't let users register as 'admin' directly for security.
-    // The role will default to 'user' in the backend.
+    role: "user",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -24,7 +23,12 @@ const Register = () => {
     setError("");
     setSuccess("");
 
-    if (!formData.username || !formData.email || !formData.password) {
+    if (
+      !formData.username ||
+      !formData.email ||
+      !formData.password ||
+      !formData.role
+    ) {
       return setError("Please fill out all fields.");
     }
 
@@ -80,6 +84,19 @@ const Register = () => {
               className="w-full px-3 py-2 border rounded-md focus:ring-indigo-500"
               required
             />
+          </div>
+
+          <div>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md focus:ring-indigo-500"
+              required
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}

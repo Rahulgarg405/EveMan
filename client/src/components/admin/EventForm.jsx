@@ -20,6 +20,7 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
   const { token } = useAuth();
   const isUpdating = !!eventData;
 
+  const EVENTS_API_URL = `${API_BASE_URL}/events`;
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -67,7 +68,9 @@ const EventForm = ({ eventData, onSuccess, onCancel }) => {
     setSubmitting(true);
     setFormError(null);
 
-    const url = isUpdating ? `${API_BASE_URL}/${eventData.id}` : API_BASE_URL;
+    const url = isUpdating
+      ? `${EVENTS_API_URL}/${eventData.id}`
+      : EVENTS_API_URL;
     const method = isUpdating ? "PUT" : "POST";
 
     const submissionToken = token || localStorage.getItem("token");
